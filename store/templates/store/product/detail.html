@@ -1,0 +1,210 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav aria-label="breadcrumb" class="my-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'store:product_list' %}">Produits</a></li>
+            <li class="breadcrumb-item"><a href="{{ product.category.get_absolute_url }}">{{ product.category.name }}</a></li>
+            <li class="breadcrumb-item active">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Product Image -->
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 400px; object-fit: cover;">
+                {% else %}
+                    <img src="{% static 'images/no_image.png' %}" class="card-img-top" alt="No image available" style="max-height: 400px; object-fit: cover;">
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-md-6">
+            <h1 class="h2 mb-4">{{ product.name }}</h1>
+            <p class="text-muted mb-4">{{ product.category.name }}</p>
+            
+            <div class="mb-4">
+                {% if product.reviews.all %}
+                    <div class="rating">
+                        {% with avg_rating=product.reviews.all|length|default:0 %}
+                            {% for i in "12345"|make_list %}
+                                {% if forloop.counter <= avg_rating %}
+                                    <i class="fas fa-star"></i>
+                                {% else %}
+                                    <i class="far fa-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="ms-2">({{ product.reviews.count }} avis)</span>
+                        {% endwith %}
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <h3 class="h4 mb-3">Prix</h3>
+                <span class="h2 text-success">{{ product.get_price_fcfa }}</span>
+            </div>
+
+            <p class="lead mb-4">{{ product.description }}</p>
+            
+            <div class="d-flex align-items-center mb-4">
+                {% if product.stock > 0 %}
+                    <span class="badge bg-success">En stock</span>
+                {% else %}
+                    <span class="badge bg-danger">Rupture de stock</span>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                <h5>Vendu par</h5>
+                <div class="d-flex align-items-center">
+                    {% if product.farmer.farmerprofile.profile_image %}
+                        <img src="{{ product.farmer.farmerprofile.profile_image.url }}" alt="{{ product.farmer.username }}" 
+                             class="rounded-circle me-2" style="width: 40px; height: 40px; object-fit: cover;">
+                    {% endif %}
+                    <div>
+                        <h6 class="mb-0">{{ product.farmer.username }}</h6>
+                        <small class="text-muted">{{ product.farmer.farmerprofile.address }}</small>
+                    </div>
+                </div>
+            </div>
+
+            {% if product.stock > 0 %}
+                <form action="{% url 'store:cart_add' product.id %}" method="post" class="mb-4">
+                    {% csrf_token %}
+                    <div class="input-group">
+                        <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}" 
+                               class="form-control" style="max-width: 100px;">
+                        <button type="submit" class="btn btn-custom">
+                            <i class="fas fa-cart-plus me-2"></i>Ajouter au panier
+                        </button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Reviews Section -->
+    <div class="row mt-5">
+        <div class="col-12">
+            <h3 class="mb-4">Avis des clients</h3>
+            
+            {% if user.is_authenticated %}
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h5 class="card-title">Laisser un avis</h5>
+                        <form action="{% url 'store:add_review' product.id %}" method="post">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label class="form-label">Note</label>
+                                <div class="rating-input">
+                                    {% for i in "12345"|make_list %}
+                                        <input type="radio" name="rating" value="{{ forloop.counter }}" id="star{{ forloop.counter }}" required>
+                                        <label for="star{{ forloop.counter }}"><i class="far fa-star"></i></label>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="comment" class="form-label">Commentaire</label>
+                                <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-custom">Publier</button>
+                        </form>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="row">
+                {% for review in product.reviews.all %}
+                    <div class="col-md-6 mb-4">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between mb-2">
+                                    <div class="rating">
+                                        {% for i in "12345"|make_list %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="fas fa-star"></i>
+                                            {% else %}
+                                                <i class="far fa-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                    <small class="text-muted">{{ review.created|date:"d/m/Y" }}</small>
+                                </div>
+                                <h6 class="card-subtitle mb-2">{{ review.user.username }}</h6>
+                                <p class="card-text">{{ review.comment }}</p>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <div class="col-12">
+                        <div class="alert alert-info">
+                            Aucun avis pour ce produit pour le moment.
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Custom CSS for star rating input -->
+<style>
+    .rating-input {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+    }
+    
+    .rating-input input {
+        display: none;
+    }
+    
+    .rating-input label {
+        cursor: pointer;
+        font-size: 1.5rem;
+        padding: 0 0.2rem;
+        color: #ddd;
+    }
+    
+    .rating-input input:checked ~ label,
+    .rating-input label:hover,
+    .rating-input label:hover ~ label {
+        color: #ffc107;
+    }
+    
+    .rating-input i {
+        transition: color 0.2s;
+    }
+</style>
+
+<!-- Custom JavaScript for star rating -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ratingLabels = document.querySelectorAll('.rating-input label');
+        
+        ratingLabels.forEach(label => {
+            label.addEventListener('mouseover', function() {
+                this.innerHTML = '<i class="fas fa-star"></i>';
+            });
+            
+            label.addEventListener('mouseout', function() {
+                if (!this.previousElementSibling.checked) {
+                    this.innerHTML = '<i class="far fa-star"></i>';
+                }
+            });
+            
+            label.addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-star"></i>';
+            });
+        });
+    });
+</script>
+{% endblock %}

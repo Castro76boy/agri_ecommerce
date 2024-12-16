@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Paiement{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Informations de livraison</h3>
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="shipping_name" class="form-label">Nom complet</label>
+                                <input type="text" class="form-control" id="shipping_name" name="shipping_name" 
+                                       value="{{ user.get_full_name }}" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label">Numéro de téléphone</label>
+                                <input type="tel" class="form-control" id="phone" name="phone" 
+                                       value="{{ user.customerprofile.phone }}" required>
+                                <div class="form-text">Format: 2XXXXXXXX ou 5XXXXXXXX ou 6XXXXXXXX ou 7XXXXXXXX</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Adresse de livraison</label>
+                            <textarea class="form-control" id="address" name="address" rows="3" required>{{ user.customerprofile.address }}</textarea>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="city" class="form-label">Ville</label>
+                                <input type="text" class="form-control" id="city" name="city" required>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="region" class="form-label">Région</label>
+                                <select class="form-select" id="region" name="region" required>
+                                    <option value="">Choisir une région</option>
+                                    {% for code, name in user.customerprofile.REGION_CHOICES %}
+                                        <option value="{{ code }}" {% if user.customerprofile.region == code %}selected{% endif %}>
+                                            {{ name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Mode de livraison</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="delivery_method" 
+                                       id="delivery_home" value="HOME" checked>
+                                <label class="form-check-label" for="delivery_home">
+                                    Livraison à domicile (+2000 FCFA)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="delivery_method" 
+                                       id="delivery_pickup" value="PICKUP">
+                                <label class="form-check-label" for="delivery_pickup">
+                                    Point de retrait (Gratuit)
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label">Mode de paiement</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" 
+                                       id="payment_cash" value="CASH" checked>
+                                <label class="form-check-label" for="payment_cash">
+                                    Paiement à la livraison
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" 
+                                       id="payment_orange" value="ORANGE_MONEY">
+                                <label class="form-check-label" for="payment_orange">
+                                    Orange Money
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="payment_method" 
+                                       id="payment_moov" value="MOOV_MONEY">
+                                <label class="form-check-label" for="payment_moov">
+                                    Moov Money
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    J'accepte les <a href="{% url 'store:terms' %}" target="_blank">conditions d'utilisation</a>
+                                    et la <a href="{% url 'store:privacy' %}" target="_blank">politique de confidentialité</a>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            Valider la commande
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Résumé de la commande</h5>
+                    {% for item in cart.items.all %}
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="d-flex align-items-center">
+                            {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                                     style="width: 50px; height: 50px; object-fit: cover;" class="me-2">
+                            {% endif %}
+                            <div>
+                                <h6 class="mb-0">{{ item.product.name }}</h6>
+                                <small class="text-muted">Quantité: {{ item.quantity }}</small>
+                            </div>
+                        </div>
+                        <div class="text-end">
+                            <div>{{ item.get_total_price_fcfa }}</div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Sous-total</span>
+                        <span>{{ cart.get_total_price_fcfa }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mb-2">
+                        <span>Frais de livraison</span>
+                        <span id="delivery_fee">2000 FCFA</span>
+                    </div>
+
+                    <hr>
+
+                    <div class="d-flex justify-content-between mb-0">
+                        <strong>Total</strong>
+                        <strong id="total_amount">{{ cart.get_total_price|add:2000|floatformat:0 }} FCFA</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deliveryFeeElement = document.getElementById('delivery_fee');
+        const totalAmountElement = document.getElementById('total_amount');
+        const subtotal = {{ cart.get_total_price }};
+        
+        // Mettre à jour les frais de livraison et le total
+        function updateTotal() {
+            const deliveryMethod = document.querySelector('input[name="delivery_method"]:checked').value;
+            const deliveryFee = deliveryMethod === 'HOME' ? 2000 : 0;
+            const total = subtotal + deliveryFee;
+            
+            deliveryFeeElement.textContent = deliveryFee ? `${deliveryFee} FCFA` : 'Gratuit';
+            totalAmountElement.textContent = `${total.toLocaleString()} FCFA`;
+        }
+        
+        // Écouter les changements de mode de livraison
+        document.querySelectorAll('input[name="delivery_method"]').forEach(radio => {
+            radio.addEventListener('change', updateTotal);
+        });
+        
+        // Validation du formulaire
+        const form = document.querySelector('form');
+        const termsCheckbox = document.getElementById('terms');
+        
+        form.addEventListener('submit', function(e) {
+            if (!termsCheckbox.checked) {
+                e.preventDefault();
+                alert('Vous devez accepter les conditions d\'utilisation et la politique de confidentialité pour continuer.');
+            }
+        });
+    });
+</script>
+{% endblock %}
+
+{% endblock %}

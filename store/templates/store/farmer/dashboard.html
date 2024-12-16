@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Tableau de bord Agriculteur{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 class="mb-4">Tableau de bord</h1>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Ventes Totales</h6>
+                            <h2 class="mt-2 mb-0">{{ total_sales }} €</h2>
+                        </div>
+                        <i class="fas fa-euro-sign fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Commandes</h6>
+                            <h2 class="mt-2 mb-0">{{ total_orders }}</h2>
+                        </div>
+                        <i class="fas fa-shopping-bag fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Produits</h6>
+                            <h2 class="mt-2 mb-0">{{ total_products }}</h2>
+                        </div>
+                        <i class="fas fa-box fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Products Section -->
+    <div class="card mb-4">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Mes Produits</h5>
+            <a href="{% url 'store:add_product' %}" class="btn btn-custom">
+                <i class="fas fa-plus me-2"></i>Ajouter un produit
+            </a>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Nom</th>
+                            <th>Catégorie</th>
+                            <th>Prix</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for product in products %}
+                        <tr>
+                            <td>
+                                {% if product.image %}
+                                    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 50px; height: 50px; object-fit: cover;">
+                                {% else %}
+                                    <img src="{% static 'images/no_image.png' %}" alt="No image" style="width: 50px; height: 50px; object-fit: cover;">
+                                {% endif %}
+                            </td>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.category.name }}</td>
+                            <td>{{ product.price }} €</td>
+                            <td>
+                                {% if product.stock > 0 %}
+                                    <span class="badge bg-success">{{ product.stock }}</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Rupture</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'store:edit_product' product.id %}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <a href="{{ product.get_absolute_url }}" class="btn btn-sm btn-outline-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">Vous n'avez pas encore de produits.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Orders Section -->
+    <div class="card">
+        <div class="card-header">
+            <h5 class="mb-0">Commandes Récentes</h5>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Commande #</th>
+                            <th>Client</th>
+                            <th>Produit</th>
+                            <th>Quantité</th>
+                            <th>Total</th>
+                            <th>Date</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order_item in orders %}
+                        <tr>
+                            <td>{{ order_item.order.id }}</td>
+                            <td>{{ order_item.order.user.username }}</td>
+                            <td>{{ order_item.product.name }}</td>
+                            <td>{{ order_item.quantity }}</td>
+                            <td>{{ order_item.price }} €</td>
+                            <td>{{ order_item.order.created|date:"d/m/Y" }}</td>
+                            <td>
+                                <span class="badge {% if order_item.order.status == 'pending' %}bg-warning
+                                           {% elif order_item.order.status == 'processing' %}bg-info
+                                           {% elif order_item.order.status == 'shipped' %}bg-primary
+                                           {% elif order_item.order.status == 'delivered' %}bg-success
+                                           {% else %}bg-danger{% endif %}">
+                                    {{ order_item.order.get_status_display }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">Aucune commande pour le moment.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        margin-bottom: 1.5rem;
+        box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    }
+    
+    .card-header {
+        background-color: #fff;
+        border-bottom: 1px solid rgba(0,0,0,.125);
+    }
+    
+    .table th {
+        border-top: none;
+    }
+    
+    .badge {
+        padding: 0.5em 0.75em;
+    }
+</style>
+{% endblock %}

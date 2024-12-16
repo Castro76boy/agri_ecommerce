@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Mon Panier{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <h2 class="mb-4">Mon Panier</h2>
+
+    {% if cart.items.all %}
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Quantité</th>
+                                    <th class="text-end">Total</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in cart.items.all %}
+                                <tr>
+                                    <td>
+                                        <div class="d-flex align-items-center">
+                                            {% if item.product.image %}
+                                            <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}"
+                                                style="width: 50px; height: 50px; object-fit: cover;" class="me-3">
+                                            {% endif %}
+                                            <div>
+                                                <h6 class="mb-0">{{ item.product.name }}</h6>
+                                                <small class="text-muted">{{ item.product.category.name }}</small>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    <td>{{ item.product.get_price_fcfa }}</td>
+                                    <td>
+                                        <form method="post" action="{% url 'store:cart_update' item.id %}" class="d-flex align-items-center">
+                                            {% csrf_token %}
+                                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.stock }}"
+                                                class="form-control form-control-sm cart-quantity me-2" style="width: 80px;">
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                                <i class="fas fa-sync-alt"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                    <td class="text-end">{{ item.get_total_price_fcfa }}</td>
+                                    <td>
+                                        <form action="{% url 'store:cart_remove' item.id %}" method="post">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">Total</h5>
+                        <h5 class="mb-0">{{ cart.get_total_price_fcfa }}</h5>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a href="{% url 'store:product_list' %}" class="btn btn-outline-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Continuer les achats
+                </a>
+                <a href="{% url 'store:checkout' %}" class="btn btn-success">
+                    <i class="fas fa-check me-2"></i>Commander
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Résumé du panier</h5>
+                    <hr>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Sous-total</span>
+                        <span>{{ cart.get_total_price_fcfa }}</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span>Livraison</span>
+                        <span class="text-success">Gratuite</span>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total</strong>
+                        <strong>{{ cart.get_total_price_fcfa }}</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+        <i class="fas fa-shopping-cart fa-3x text-muted mb-3"></i>
+        <h3>Votre panier est vide</h3>
+        <p class="text-muted">Découvrez nos produits et commencez vos achats!</p>
+        <a href="{% url 'store:product_list' %}" class="btn btn-success">
+            <i class="fas fa-shopping-basket me-2"></i>Voir les produits
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

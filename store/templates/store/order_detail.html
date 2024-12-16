@@ -1,0 +1,148 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h2 class="h4 mb-0">Commande #{{ order.id }}</h2>
+                    <span class="badge bg-light text-success">{{ order.get_status_display }}</span>
+                </div>
+                
+                <div class="card-body">
+                    <!-- Informations de commande -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5>Informations client</h5>
+                            <p class="mb-1"><strong>Nom :</strong> {{ order.shipping_name }}</p>
+                            <p class="mb-1"><strong>Email :</strong> {{ order.email }}</p>
+                            <p class="mb-1"><strong>Téléphone :</strong> {{ order.phone }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Adresse de livraison</h5>
+                            <p class="mb-1">{{ order.shipping_address }}</p>
+                            <p class="mb-1">{{ order.shipping_city }}, {{ order.shipping_region }}</p>
+                            {% if order.delivery_notes %}
+                            <p class="mb-1"><strong>Notes :</strong> {{ order.delivery_notes }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Articles commandés -->
+                    <h5 class="mb-3">Articles commandés</h5>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Prix unitaire</th>
+                                    <th>Quantité</th>
+                                    <th class="text-end">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in items %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ item.product.get_absolute_url }}" class="text-decoration-none">
+                                            {{ item.product.name }}
+                                        </a>
+                                    </td>
+                                    <td>{{ item.get_price_fcfa }}</td>
+                                    <td>{{ item.quantity }}</td>
+                                    <td class="text-end">{{ item.get_total_price_fcfa }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Sous-total :</strong></td>
+                                    <td class="text-end">{{ order.subtotal|floatformat:2 }} FCFA</td>
+                                </tr>
+                                {% if order.delivery_fee %}
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Frais de livraison :</strong></td>
+                                    <td class="text-end">{{ order.delivery_fee|floatformat:2 }} FCFA</td>
+                                </tr>
+                                {% endif %}
+                                {% if order.discount %}
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Réduction :</strong></td>
+                                    <td class="text-end">-{{ order.discount|floatformat:2 }} FCFA</td>
+                                </tr>
+                                {% endif %}
+                                <tr>
+                                    <td colspan="3" class="text-end"><strong>Total :</strong></td>
+                                    <td class="text-end"><strong>{{ order.get_total_price_fcfa }}</strong></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+
+                    <!-- Informations de paiement et livraison -->
+                    <div class="row mt-4">
+                        <div class="col-md-6">
+                            <h5>Paiement</h5>
+                            <p class="mb-1"><strong>Méthode :</strong> {{ order.get_payment_method_display }}</p>
+                            <p class="mb-1"><strong>Statut :</strong> {{ order.get_payment_status_display }}</p>
+                            {% if order.payment_reference %}
+                            <p class="mb-1"><strong>Référence :</strong> {{ order.payment_reference }}</p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <h5>Livraison</h5>
+                            <p class="mb-1"><strong>Méthode :</strong> {{ order.get_delivery_method_display }}</p>
+                            {% if order.tracking_number %}
+                            <p class="mb-1"><strong>N° de suivi :</strong> {{ order.tracking_number }}</p>
+                            {% endif %}
+                            {% if order.estimated_delivery %}
+                            <p class="mb-1"><strong>Livraison estimée :</strong> {{ order.estimated_delivery|date:"d/m/Y" }}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="mt-4 text-end">
+                        {% if can_cancel %}
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#cancelModal">
+                            Annuler la commande
+                        </button>
+                        {% endif %}
+                        <a href="{% url 'store:order_list' %}" class="btn btn-secondary">
+                            Retour aux commandes
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'annulation -->
+{% if can_cancel %}
+<div class="modal fade" id="cancelModal" tabindex="-1" aria-labelledby="cancelModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="cancelModalLabel">Confirmer l'annulation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir annuler cette commande ? Cette action est irréversible.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form method="post" action="{% url 'store:cancel_order' order.id %}" class="d-inline">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Confirmer l'annulation</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

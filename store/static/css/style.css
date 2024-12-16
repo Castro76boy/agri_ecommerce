@@ -1,0 +1,104 @@
+/* Style général */
+body {
+    font-family: 'Roboto', sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Header */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.navbar-brand {
+    font-weight: bold;
+    color: #28a745 !important;
+}
+
+/* Footer */
+footer {
+    background-color: #f8f9fa;
+    padding: 3rem 0;
+    margin-top: 3rem;
+}
+
+/* Boutons */
+.btn-custom {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+}
+
+.btn-custom:hover {
+    background-color: #218838;
+    color: white;
+}
+
+/* Cards */
+.card {
+    transition: transform 0.2s;
+    margin-bottom: 1rem;
+    border: none;
+    box-shadow: 0 2px 4px rgba(0,0,0,.1);
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+/* Product grid */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+}
+
+/* Form styles */
+.form-control:focus {
+    border-color: #28a745;
+    box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Newsletter form */
+.newsletter-form {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.newsletter-form input {
+    flex: 1;
+}
+
+/* Social media icons */
+.social-icons a {
+    color: #28a745;
+    font-size: 1.5rem;
+    transition: color 0.2s;
+}
+
+.social-icons a:hover {
+    color: #218838;
+}
+
+/* Category badges */
+.category-badge {
+    background-color: #28a745;
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+}
+
+/* Price */
+.price {
+    color: #28a745;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+/* Rating stars */
+.rating {
+    color: #ffc107;
+}

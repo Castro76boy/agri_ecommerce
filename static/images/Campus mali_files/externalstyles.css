@@ -1,0 +1,31 @@
+
+
+.auto_complete {
+  background: #fff;
+  max-height: 350px;
+  overflow-y: auto;
+  z-index: 3001;
+}
+.auto_complete ul {
+    border:1px solid lightgray;
+    margin:0;
+    padding:0;
+    width:auto;
+    list-style-type:none;
+    border-color: lightgray;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(220, 220, 220, 0.6);
+    outline: 0 none;
+}
+.auto_complete ul li {
+    margin:0;
+    padding:3px;
+}
+.auto_complete ul li.selected { 
+    background-color: #ff9900; 
+    color: #ffffff;
+}
+.auto_complete ul strong.highlight { 
+    color: #800; 
+    margin:0;
+    padding:0;
+}

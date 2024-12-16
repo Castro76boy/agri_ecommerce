@@ -1,0 +1,143 @@
+{% extends "../base.html" %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Inscription - BIO Recolte{% endblock %}
+
+{% block extra_css %}
+<style>
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    .asteriskField {
+        color: red;
+        margin-left: 2px;
+    }
+    .help-block {
+        font-size: 0.875rem;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+    .invalid-feedback {
+        display: block;
+    }
+    .card {
+        border: none;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    }
+    .card-header {
+        background-color: #28a745;
+        color: white;
+        border-bottom: none;
+    }
+    .btn-success {
+        padding: 0.75rem 1.25rem;
+        font-weight: 600;
+    }
+    .form-text {
+        font-size: 0.875rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center py-3">
+                    <h2 class="mb-0">Créer un compte</h2>
+                </div>
+                <div class="card-body p-4">
+                    {% if messages %}
+                    <div class="messages mb-4">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="alert alert-info mb-4">
+                        <h5 class="alert-heading">Pourquoi créer un compte ?</h5>
+                        <ul class="mb-0">
+                            <li>Accédez à des produits agricoles frais et locaux</li>
+                            <li>Suivez vos commandes en temps réel</li>
+                            <li>Bénéficiez d'offres exclusives</li>
+                            <li>Gardez un historique de vos achats</li>
+                        </ul>
+                    </div>
+
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Informations personnelles</h4>
+                                {{ form.username|as_crispy_field }}
+                                {{ form.email|as_crispy_field }}
+                                {{ form.first_name|as_crispy_field }}
+                                {{ form.last_name|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="mb-3">Coordonnées</h4>
+                                {{ form.phone|as_crispy_field }}
+                                {{ form.address|as_crispy_field }}
+                                {{ form.region|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <h4 class="mb-3">Sécurité</h4>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {{ form.password1|as_crispy_field }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form.password2|as_crispy_field }}
+                            </div>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" required id="terms">
+                            <label class="form-check-label" for="terms">
+                                J'accepte les <a href="{% url 'store:terms' %}" target="_blank">conditions d'utilisation</a>
+                                et la <a href="{% url 'store:privacy' %}" target="_blank">politique de confidentialité</a>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-lg w-100">
+                            Créer mon compte
+                        </button>
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p class="mb-0">Déjà inscrit ?</p>
+                        <a href="{% url 'login' %}" class="btn btn-outline-success mt-2">
+                            Se connecter
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Validation du formulaire
+    const form = document.querySelector('form');
+    const termsCheckbox = document.getElementById('terms');
+
+    form.addEventListener('submit', function(e) {
+        if (!termsCheckbox.checked) {
+            e.preventDefault();
+            alert('Vous devez accepter les conditions d\'utilisation et la politique de confidentialité pour continuer.');
+        }
+    });
+});
+</script>
+{% endblock %}
+
+{% endblock %}

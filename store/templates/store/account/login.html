@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Connexion{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Connexion</h2>
+
+                    {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                            Identifiants incorrects. Veuillez réessayer.
+                        </div>
+                    {% endif %}
+
+                    <form method="post" action="{% url 'login' %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <input type="text" name="username" id="id_username" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="id_password" class="form-label">Mot de passe</label>
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-lock"></i>
+                                </span>
+                                <input type="password" name="password" id="id_password" class="form-control" required>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-custom w-100 mb-3">
+                            <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                        </button>
+
+                        <input type="hidden" name="next" value="{{ next }}">
+                    </form>
+
+                    <div class="text-center mt-4">
+                        <p class="mb-0">Pas encore de compte ?</p>
+                        <a href="#" class="text-decoration-none">Créer un compte</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.btn-custom {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+    color: white;
+}
+
+.btn-custom:hover {
+    background-color: var(--primary-color-dark);
+    border-color: var(--primary-color-dark);
+    color: white;
+}
+
+.input-group-text {
+    background-color: #f8f9fa;
+    border-right: none;
+}
+
+.input-group .form-control {
+    border-left: none;
+}
+
+.input-group .form-control:focus {
+    border-color: #ced4da;
+    box-shadow: none;
+}
+
+.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.form-control:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(46, 204, 113, 0.25);
+}
+</style>
+{% endblock %}

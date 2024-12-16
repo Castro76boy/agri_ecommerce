@@ -1,0 +1,142 @@
+{% extends "store/base.html" %}
+{% load static %}
+
+{% block title %}
+    Catégories | {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8">
+    <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Liste des catégories -->
+        <div class="lg:w-2/3">
+            <h1 class="text-3xl font-bold mb-8 text-center">Catégories de produits</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {% for category in categories %}
+                <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                    {% if category.image %}
+                    <img src="{{ category.image.url }}" alt="{{ category.name }}" class="w-full h-48 object-cover">
+                    {% else %}
+                    <div class="w-full h-48 bg-gray-200 flex items-center justify-center">
+                        <span class="text-gray-400">Pas d'image</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="p-6">
+                        <h2 class="text-xl font-semibold mb-4">{{ category.name }}</h2>
+                        {% if category.description %}
+                        <p class="text-gray-600 mb-4">{{ category.description|truncatewords:20 }}</p>
+                        {% endif %}
+                        
+                        {% if category.children.exists %}
+                        <div class="mb-4">
+                            <h3 class="text-lg font-medium mb-2">Sous-catégories :</h3>
+                            <ul class="list-disc list-inside">
+                                {% for subcategory in category.children.all %}
+                                <li>
+                                    <a href="{% url 'store:product_list_by_category' subcategory.slug %}" 
+                                       class="text-blue-600 hover:text-blue-800">
+                                        {{ subcategory.name }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="flex justify-between items-center">
+                            <span class="text-gray-600">
+                                {{ category.products.count }} produit{{ category.products.count|pluralize }}
+                            </span>
+                            <a href="{% url 'store:product_list_by_category' category.slug %}" 
+                               class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+                                Voir les produits
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-span-full text-center py-8">
+                    <p class="text-gray-600">Aucune catégorie disponible pour le moment.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Panier -->
+        <div class="lg:w-1/3">
+            <div class="bg-white rounded-lg shadow-md p-6 sticky top-4">
+                <h2 class="text-2xl font-bold mb-6">Mon Panier</h2>
+                
+                {% if cart_items %}
+                    <div class="space-y-4">
+                        {% for item in cart_items %}
+                        <div class="flex items-center justify-between border-b pb-4">
+                            <div class="flex items-center space-x-4">
+                                {% if item.product.image %}
+                                <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" 
+                                     class="w-16 h-16 object-cover rounded">
+                                {% else %}
+                                <div class="w-16 h-16 bg-gray-200 rounded flex items-center justify-center">
+                                    <span class="text-gray-400 text-xs">Pas d'image</span>
+                                </div>
+                                {% endif %}
+                                
+                                <div>
+                                    <h3 class="font-medium">{{ item.product.name }}</h3>
+                                    <p class="text-sm text-gray-600">
+                                        {{ item.quantity }} × {{ item.product.price|floatformat:0 }} FCFA
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex items-center space-x-2">
+                                <form method="post" action="{% url 'store:cart_update' item.id %}" class="flex items-center space-x-2">
+                                    {% csrf_token %}
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1"
+                                           class="w-16 px-2 py-1 border rounded text-center">
+                                    <button type="submit" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-sync-alt"></i>
+                                    </button>
+                                </form>
+                                
+                                <form method="post" action="{% url 'store:cart_remove' item.id %}" class="inline">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-red-600 hover:text-red-800">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                        <div class="mt-6 space-y-4">
+                            <div class="flex justify-between font-bold">
+                                <span>Total</span>
+                                <span>{{ cart.get_total_price|floatformat:0 }} FCFA</span>
+                            </div>
+                            
+                            <a href="{% url 'store:checkout' %}" 
+                               class="block w-full bg-green-500 text-white text-center py-3 rounded-lg hover:bg-green-600 transition-colors">
+                                Passer la commande
+                            </a>
+                            
+                            <a href="{% url 'store:cart_detail' %}" 
+                               class="block w-full text-center text-gray-600 hover:text-gray-800">
+                                Voir le panier détaillé
+                            </a>
+                        </div>
+                    </div>
+                {% else %}
+                    <p class="text-gray-600 text-center">Votre panier est vide</p>
+                    <a href="{% url 'store:product_list' %}" 
+                       class="block w-full bg-green-500 text-white text-center py-3 rounded-lg mt-4 hover:bg-green-600 transition-colors">
+                        Parcourir les produits
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

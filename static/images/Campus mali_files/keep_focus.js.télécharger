@@ -1,0 +1,43 @@
+var CktlOfficeView = {
+
+    selectRow: function(tr) {
+        // Déselection des autres lignes
+        var table = Element.up(tr);
+        if (Element.up(table).hasClassName('selectionMultiple') == false ) {
+	        table.getElementsBySelector('tr.selected').each(function(e) {
+	            e.removeClassName('selected');
+	        });
+        }
+        // Sélection de la ligne courante
+        Element.toggleClassName(tr, 'selected');
+    },
+    
+    registerHandlerOnInputs: function(container) {
+        // On itère sur les inputs et on attache un handler pour retenir le focus
+        container.getElementsBySelector('input').each(function(e) {
+            Event.observe(e, "focus", function(event) { CASTBV.retainFocus(e, true); });
+        });
+   },
+    
+    retainFocus: function(e, select) {
+        this.eltHadFocus = e.name;
+        this.select = select
+    },
+    
+    reapplyFocus: function() {
+        var elt = document.getElementsByName(this.eltHadFocus)[0];
+        if (elt != null) {
+            if(this.select) {
+                elt.activate();
+            } else {
+                elt.focus();
+                elt.setSelectionRange(elt.value.length,elt.value.length);
+            }
+            
+            
+        }
+    }
+
+}
+
+var CASTBV = CktlOfficeView;

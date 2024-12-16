@@ -1,0 +1,140 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %} - BIO Recolte</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-success sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'store:home' %}">
+                <i class="fas fa-leaf me-2"></i>BIO Recolte
+            </a>
+            
+            <!-- Barre de recherche -->
+            <form class="d-none d-md-flex mx-auto" style="width: 40%;" method="GET" action="{% url 'store:product_list' %}">
+                <div class="input-group">
+                    <input type="search" name="search" class="form-control" placeholder="Rechercher un produit..." value="{{ request.GET.search }}">
+                    <button class="btn btn-light" type="submit">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+            </form>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'store:product_list' %}">
+                            <i class="fas fa-store me-1"></i>Produits
+                        </a>
+                    </li>
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">
+                                <i class="fas fa-user me-1"></i>{{ user.username }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="{% url 'store:profile' %}">Mon profil</a></li>
+                                <li><a class="dropdown-item" href="{% url 'store:my_orders' %}">Mes commandes</a></li>
+                                {% if user.farmerprofile %}
+                                    <li><a class="dropdown-item" href="{% url 'store:farmer_dashboard' %}">Tableau de bord</a></li>
+                                {% else %}
+                                    <li><a class="dropdown-item" href="{% url 'store:become_farmer' %}">Devenir vendeur</a></li>
+                                {% endif %}
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="{% url 'logout' %}">Déconnexion</a></li>
+                            </ul>
+                        </li>
+                    {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'login' %}">Connexion</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'register' %}">Inscription</a>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item">
+                        <a class="nav-link position-relative" href="{% url 'store:cart_detail' %}">
+                            <i class="fas fa-shopping-cart"></i>
+                            {% if cart.total_items %}
+                                <span class="cart-badge">{{ cart.total_items }}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <!-- Contenu principal -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer mt-5 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <h5 class="mb-3">À propos de BIO Recolte</h5>
+                    <p class="text-muted">Plateforme de commerce en ligne dédiée aux produits agricoles biologiques, connectant directement les agriculteurs locaux aux consommateurs.</p>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="mb-3">Liens rapides</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{% url 'store:about' %}" class="text-muted">À propos</a></li>
+                        <li><a href="{% url 'store:contact' %}" class="text-muted">Contact</a></li>
+                        <li><a href="{% url 'store:terms' %}" class="text-muted">Conditions d'utilisation</a></li>
+                        <li><a href="{% url 'store:privacy' %}" class="text-muted">Politique de confidentialité</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <h5 class="mb-3">Suivez-nous</h5>
+                    <div class="d-flex gap-3">
+                        <a href="#" class="text-muted"><i class="fab fa-facebook fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-twitter fa-lg"></i></a>
+                        <a href="#" class="text-muted"><i class="fab fa-instagram fa-lg"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center text-muted">
+                <small>&copy; {% now "Y" %} BIO Recolte. Tous droits réservés.</small>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

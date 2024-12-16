@@ -1,0 +1,176 @@
+/* Custom styles */
+.navbar {
+    margin-bottom: 20px;
+}
+
+.product-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.product-card .btn {
+    margin-top: auto;
+}
+
+.product-image {
+    max-height: 300px;
+    object-fit: cover;
+}
+
+.cart-quantity {
+    width: 80px !important;
+}
+
+.category-list {
+    position: sticky;
+    top: 20px;
+}
+
+.price {
+    font-size: 1.5em;
+    color: #28a745;
+    font-weight: bold;
+}
+
+.stock-info {
+    color: #6c757d;
+    font-size: 0.9em;
+}
+
+.farmer-info {
+    margin: 10px 0;
+    padding: 10px;
+    background-color: #f8f9fa;
+    border-radius: 5px;
+}
+
+/* Variables */
+:root {
+  --primary-color: #28a745;
+  --primary-dark: #1e7e34;
+  --secondary-color: #6c757d;
+  --success-color: #28a745;
+  --warning-color: #ffc107;
+  --danger-color: #dc3545;
+}
+
+/* Général */
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+}
+
+/* Hero Section */
+.hero-section {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  min-height: 500px;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+/* Cards */
+.card {
+  transition: transform 0.3s ease;
+  border: none;
+  border-radius: 10px;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.product-card {
+  height: 100%;
+}
+
+.product-card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Buttons */
+.btn-custom {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+  padding: 10px 25px;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+  background-color: var(--primary-dark);
+  border-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+/* Navigation */
+.navbar {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+  font-weight: 600;
+}
+
+/* Cart Badge */
+.cart-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  padding: 4px 8px;
+  border-radius: 50%;
+  background-color: var(--danger-color);
+  color: white;
+  font-size: 12px;
+}
+
+/* Forms */
+.form-control {
+  border-radius: 20px;
+  padding: 10px 20px;
+}
+
+.form-control:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
+}
+
+/* Footer */
+.footer {
+  background-color: #f8f9fa;
+  padding: 40px 0;
+  margin-top: 60px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-section {
+    min-height: 400px;
+  }
+  
+  .navbar-brand {
+    font-size: 1.2rem;
+  }
+  
+  .product-card img {
+    height: 150px;
+  }
+}

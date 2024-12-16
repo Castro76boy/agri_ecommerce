@@ -1,0 +1,100 @@
+{% extends 'store/base.html' %}
+{% load static %}
+
+{% block title %}{{ page_title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">{{ page_title }}</h1>
+            
+            {% if orders %}
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>N° Commande</th>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Statut</th>
+                            <th>Paiement</th>
+                            <th class="text-end">Total</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>
+                                <a href="{% url 'store:order_detail' order.id %}" class="text-decoration-none">
+                                    #{{ order.id }}
+                                </a>
+                            </td>
+                            <td>{{ order.created|date:"d/m/Y H:i" }}</td>
+                            <td>{{ order.shipping_name }}</td>
+                            <td>
+                                <span class="badge {% if order.status == 'DELIVERED' %}bg-success{% elif order.status == 'CANCELLED' %}bg-danger{% else %}bg-primary{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge {% if order.payment_status == 'PAID' %}bg-success{% elif order.payment_status == 'FAILED' %}bg-danger{% else %}bg-warning{% endif %}">
+                                    {{ order.get_payment_status_display }}
+                                </span>
+                            </td>
+                            <td class="text-end">{{ order.get_total_price_fcfa }}</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="{% url 'store:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">
+                                        Détails
+                                    </a>
+                                    {% if order.can_cancel %}
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#cancelModal{{ order.id }}">
+                                        Annuler
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Modals d'annulation -->
+            {% for order in orders %}
+            {% if order.can_cancel %}
+            <div class="modal fade" id="cancelModal{{ order.id }}" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Confirmer l'annulation</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Êtes-vous sûr de vouloir annuler la commande #{{ order.id }} ? Cette action est irréversible.</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <form method="post" action="{% url 'store:cancel_order' order.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-danger">Confirmer l'annulation</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+            
+            {% else %}
+            <div class="alert alert-info">
+                Vous n'avez pas encore de commandes.
+                <a href="{% url 'store:product_list' %}" class="alert-link">Découvrez nos produits</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block title %}BIO Récolte - Accueil{% endblock %}
+
+{% block content %}
+<div class="hero-section position-relative">
+    <div class="hero-image" style="background-image: url('{% static 'images/imm.jpg' %}');">
+        <div class="hero-overlay"></div>
+        <div class="container position-relative h-100">
+            <div class="hero-content text-white text-center">
+                <h1 class="display-4 mb-4 fw-bold">Bienvenue sur BIO Récolte</h1>
+                <p class="lead mb-4">Découvrez des produits frais et biologiques directement des producteurs locaux</p>
+                <a href="{% url 'store:product_list' %}" class="btn btn-success btn-lg">Découvrir nos produits</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="features-section py-5 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <i class="fas fa-leaf fa-3x text-success"></i>
+                    <h3>100% Bio</h3>
+                    <p>Des produits certifiés biologiques pour votre bien-être et celui de la planète</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <i class="fas fa-truck fa-3x text-success"></i>
+                    <h3>Livraison Locale</h3>
+                    <p>Des produits frais livrés directement chez vous par nos agriculteurs partenaires</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="feature-card text-center">
+                    <i class="fas fa-users fa-3x text-success"></i>
+                    <h3>Producteurs Locaux</h3>
+                    <p>Soutenez les agriculteurs de votre région et participez à l'économie locale</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

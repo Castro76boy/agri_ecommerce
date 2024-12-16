@@ -1,0 +1,80 @@
+{% extends "store/base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Modifier mon profil{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body p-5">
+                    <h2 class="text-center mb-4">Modifier mon profil</h2>
+
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }}">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-12">
+                                {{ profile_form|crispy }}
+                            </div>
+                        </div>
+
+                        {% if profile_form.instance.profile_image %}
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <img src="{{ profile_form.instance.profile_image.url }}" 
+                                     alt="Photo de profil actuelle" 
+                                     class="img-thumbnail" 
+                                     style="max-width: 200px;">
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        <div class="d-grid gap-2 mt-4">
+                            <button type="submit" class="btn btn-primary">
+                                Enregistrer les modifications
+                            </button>
+                            <a href="{% url 'store:profile' %}" class="btn btn-outline-secondary">
+                                Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if profile_form.instance.profile_image %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const imageInput = document.querySelector('input[type="file"]');
+    const previewContainer = document.querySelector('.img-thumbnail');
+
+    if (imageInput && previewContainer) {
+        imageInput.addEventListener('change', function() {
+            if (this.files && this.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    previewContainer.src = e.target.result;
+                }
+                
+                reader.readAsDataURL(this.files[0]);
+            }
+        });
+    }
+});
+</script>
+{% endif %}
+{% endblock %}

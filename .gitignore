@@ -1,0 +1,48 @@
+# Python
+*.pyc
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+*.log
+*.pot
+*.pyc
+db.sqlite3
+media/
+staticfiles/
+
+# Environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+logs/
+
+# Local development settings
+local_settings.py
+
+# Coverage
+.coverage
+htmlcov/
+
+# Cache
+*.cache
+
+# Temp files
+*.bak
+*.tmp
+*~
+
+# System files
+.DS_Store
+Thumbs.db

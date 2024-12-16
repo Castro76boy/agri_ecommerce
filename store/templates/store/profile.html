@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block title %}Mon Profil - BIO Recolte{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Mon Profil</h3>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="first_name" class="form-label">Prénom</label>
+                                    <input type="text" class="form-control" id="first_name" name="first_name" value="{{ user.first_name }}">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="last_name" class="form-label">Nom</label>
+                                    <input type="text" class="form-control" id="last_name" name="last_name" value="{{ user.last_name }}">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" value="{{ user.profile.phone|default:'' }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Adresse</label>
+                            <textarea class="form-control" id="address" name="address" rows="3">{{ user.profile.address|default:'' }}</textarea>
+                        </div>
+
+                        <hr class="my-4">
+
+                        <div class="mb-3">
+                            <label for="current_password" class="form-label">Mot de passe actuel</label>
+                            <input type="password" class="form-control" id="current_password" name="current_password">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="new_password" class="form-label">Nouveau mot de passe</label>
+                                    <input type="password" class="form-control" id="new_password" name="new_password">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="confirm_password" class="form-label">Confirmer le mot de passe</label>
+                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-custom btn-lg">Mettre à jour le profil</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if user.is_farmer %}
+            <div class="card shadow mt-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Profil Producteur</h3>
+                </div>
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        <a href="{% url 'store:farmer_dashboard' %}" class="btn btn-custom">Accéder au tableau de bord producteur</a>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="card shadow mt-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0">Devenir Producteur</h3>
+                </div>
+                <div class="card-body">
+                    <p>Vous êtes un agriculteur bio ? Rejoignez notre communauté de producteurs !</p>
+                    <div class="text-center">
+                        <a href="{% url 'store:become_farmer' %}" class="btn btn-custom">Devenir producteur</a>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

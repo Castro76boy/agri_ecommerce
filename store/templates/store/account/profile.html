@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <!-- Informations du profil -->
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <div class="text-center mb-4">
+                        {% if profile.profile_image %}
+                            <img src="{{ profile.profile_image.url }}" alt="Photo de profil" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% else %}
+                            <img src="{% static 'images/default-profile.png' %}" alt="Photo de profil par défaut" class="rounded-circle img-thumbnail" style="width: 150px; height: 150px; object-fit: cover;">
+                        {% endif %}
+                    </div>
+                    <h4 class="card-title text-center">{{ user.get_full_name|default:user.username }}</h4>
+                    <hr>
+                    <p><strong>Email:</strong> {{ user.email }}</p>
+                    <p><strong>Téléphone:</strong> {{ profile.phone|default:"Non renseigné" }}</p>
+                    <p><strong>Région:</strong> {{ profile.get_region_display }}</p>
+                    <p><strong>Adresse:</strong> {{ profile.address|default:"Non renseignée" }}</p>
+                    <div class="text-center mt-4">
+                        <a href="{% url 'store:edit_profile' %}" class="btn btn-primary">Modifier mon profil</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Commandes récentes -->
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Mes dernières commandes</h4>
+                    <hr>
+                    {% if recent_orders %}
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Commande</th>
+                                        <th>Date</th>
+                                        <th>Statut</th>
+                                        <th>Total</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for order in recent_orders %}
+                                    <tr>
+                                        <td>#{{ order.id }}</td>
+                                        <td>{{ order.created|date:"d/m/Y" }}</td>
+                                        <td>
+                                            <span class="badge {% if order.status == 'DELIVERED' %}bg-success
+                                                {% elif order.status == 'CANCELLED' %}bg-danger
+                                                {% elif order.status == 'SHIPPING' %}bg-info
+                                                {% elif order.status == 'PREPARING' %}bg-primary
+                                                {% elif order.status == 'CONFIRMED' %}bg-success
+                                                {% else %}bg-warning{% endif %}">
+                                                {{ order.get_status_display }}
+                                            </span>
+                                            {% if order.payment_status != 'PAID' %}
+                                            <span class="badge bg-warning ms-1">
+                                                {{ order.get_payment_status_display }}
+                                            </span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ order.get_total_amount_fcfa }}</td>
+                                        <td>
+                                            <a href="{% url 'store:order_detail' order.id %}" class="btn btn-sm btn-outline-primary">Détails</a>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center text-muted">Vous n'avez pas encore passé de commande.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Statistiques -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h4 class="card-title">Mes statistiques</h4>
+                    <hr>
+                    <div class="row text-center">
+                        <div class="col-md-4">
+                            <h5>{{ profile.get_total_orders }}</h5>
+                            <p class="text-muted">Commandes totales</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>{{ recent_orders.count }}</h5>
+                            <p class="text-muted">Commandes récentes</p>
+                        </div>
+                        <div class="col-md-4">
+                            <h5>{{ user.date_joined|date:"d/m/Y" }}</h5>
+                            <p class="text-muted">Membre depuis</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

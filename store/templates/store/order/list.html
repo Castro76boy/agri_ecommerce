@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Liste des commandes
+{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h2>Liste des commandes</h2>
+        
+        {% if orders %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Numéro de commande</th>
+                            <th>Date</th>
+                            <th>Total</th>
+                            <th>Statut</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                            <tr>
+                                <td>#{{ order.id }}</td>
+                                <td>{{ order.created|date:"d/m/Y H:i" }}</td>
+                                <td>{{ order.total_amount }} €</td>
+                                <td>{{ order.get_status_display }}</td>
+                                <td>
+                                    <a href="{% url 'store:order_detail' order.id %}" class="btn btn-info btn-sm">
+                                        Détails
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="alert alert-info">
+                Vous n'avez pas encore de commandes.
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

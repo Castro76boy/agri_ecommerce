@@ -1,0 +1,461 @@
+/*=== 1. General Structure ===*/
+html,
+/* body { */
+/*   background: #ffffff; */
+/*   padding: 5px; */
+/*   font-family: 'Varela Round'; */
+/* } */
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #fbfbfb;
+}
+
+/*=== 2. Anchor Link ===*/
+a {
+  color: #aaaaaa;
+  transition: all ease-in-out 200ms;
+}
+
+a:hover {
+  color: #333333;
+  text-decoration: none;
+}
+
+/*=== 3. Text Outside the Box ===*/
+.etc-cursus-form {
+  color: #919191;
+  padding: 5px 10px;
+}
+
+.etc-cursus-form p {
+  margin-bottom: 5px;
+}
+
+/*=== 4. Main Form ===*/
+.cursus-form-1 {
+  max-width: fit-content;
+  border-radius: 5px;
+  display: inline-block;
+}
+
+.main-cursus-form {
+  position: relative;
+}
+
+.cursus-form-1 .form-control {
+  border: 0;
+  box-shadow: 0 0 0;
+  border-radius: 0;
+  background: transparent;
+  color: #555555;
+  padding: 7px 0;
+  font-weight: bold;
+  height: auto;
+}
+
+.cursus-form-1 .form-control::-webkit-input-placeholder {
+  color: #999999;
+}
+
+.cursus-form-1 .form-control:-moz-placeholder,
+.cursus-form-1 .form-control::-moz-placeholder,
+.cursus-form-1 .form-control:-ms-input-placeholder {
+  color: #999999;
+}
+
+.cursus-form-1 .form-group {
+  margin-bottom: 0;
+  border-bottom: 2px solid #efefef;
+  padding-right: 10px;
+  position: relative;
+}
+
+.cursus-form-1 .form-group:last-child {
+  border-bottom: 0;
+}
+
+.cursus-group {
+  background: #ffffff;
+  color: #999999;
+  border-radius: 8px;
+  padding: 5px 20px;
+}
+
+.cursus-group-checkbox {
+  padding: 5px 0;
+}
+
+/*=== 5. cursus Button ===*/
+.cursus-form-1 .cursus-button {
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  background: #ffffff;
+  color: #999999;
+  padding: 11px 0;
+  width: 50px;
+  height: 50px;
+  margin-top: -25px;
+  border: 5px solid #efefef;
+  border-radius: 50%;
+  transition: all ease-in-out 500ms;
+}
+
+.cursus-form-1 .cursus-button:hover {
+  color: #555555;
+  transform: rotate(450deg);
+}
+
+.cursus-form-1 .cursus-button.clicked {
+  color: #555555;
+}
+
+.cursus-form-1 .cursus-button.clicked:hover {
+  transform: none;
+}
+
+.cursus-form-1 .cursus-button.clicked.success {
+  color: #2ecc71;
+}
+
+.cursus-form-1 .cursus-button.clicked.error {
+  color: #e74c3c;
+}
+
+/*=== 6. Form Invalid ===*/
+label.form-invalid {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 5;
+  display: block;
+  margin-top: -25px;
+  padding: 7px 9px;
+  background: #777777;
+  color: #ffffff;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 11px;
+}
+
+label.form-invalid:after {
+  top: 100%;
+  right: 10px;
+  border: solid transparent;
+  content: " ";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  border-color: transparent;
+  border-top-color: #777777;
+  border-width: 6px;
+}
+
+/*=== 7. Form - Main Message ===*/
+.cursus-form-main-message {
+  background: #ffffff;
+  color: #999999;
+  border-left: 3px solid transparent;
+  border-radius: 3px;
+  margin-bottom: 8px;
+  font-weight: bold;
+  height: 0;
+  padding: 0 20px 0 17px;
+  opacity: 0;
+  transition: all ease-in-out 200ms;
+}
+
+.cursus-form-main-message.show {
+  height: auto;
+  opacity: 1;
+  padding: 10px 20px 10px 17px;
+}
+
+.cursus-form-main-message.success {
+  border-left-color: #2ecc71;
+}
+
+.cursus-form-main-message.error {
+  border-left-color: #e74c3c;
+}
+
+/*=== 8. Custom Checkbox & Radio ===*/
+/* Base for label styling */
+[type="checkbox"]:not(:checked),
+[type="checkbox"]:checked,
+[type="radio"]:not(:checked),
+[type="radio"]:checked {
+  position: absolute;
+  left: -9999px;
+}
+
+[type="checkbox"]:not(:checked)+label,
+[type="checkbox"]:checked+label,
+[type="radio"]:not(:checked)+label,
+[type="radio"]:checked+label {
+  position: relative;
+  padding-left: 25px;
+  padding-top: 1px;
+  cursor: pointer;
+}
+
+/* checkbox aspect */
+[type="checkbox"]:not(:checked)+label:before,
+[type="checkbox"]:checked+label:before,
+[type="radio"]:not(:checked)+label:before,
+[type="radio"]:checked+label:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 2px;
+  width: 17px;
+  height: 17px;
+  border: 0px solid #aaa;
+  background: #f0f0f0;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* checked mark aspect */
+[type="checkbox"]:not(:checked)+label:after,
+[type="checkbox"]:checked+label:after,
+[type="radio"]:not(:checked)+label:after,
+[type="radio"]:checked+label:after {
+  position: absolute;
+  color: #555555;
+  transition: all .2s;
+}
+
+/* checked mark aspect changes */
+[type="checkbox"]:not(:checked)+label:after,
+[type="radio"]:not(:checked)+label:after {
+  opacity: 0;
+  transform: scale(0);
+}
+
+[type="checkbox"]:checked+label:after,
+[type="radio"]:checked+label:after {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* disabled checkbox */
+[type="checkbox"]:disabled:not(:checked)+label:before,
+[type="checkbox"]:disabled:checked+label:before,
+[type="radio"]:disabled:not(:checked)+label:before,
+[type="radio"]:disabled:checked+label:before {
+  box-shadow: none;
+  border-color: #8c8c8c;
+  background-color: #878787;
+}
+
+[type="checkbox"]:disabled:checked+label:after,
+[type="radio"]:disabled:checked+label:after {
+  color: #555555;
+}
+
+[type="checkbox"]:disabled+label,
+[type="radio"]:disabled+label {
+  color: #8c8c8c;
+}
+
+/* accessibility */
+[type="checkbox"]:checked:focus+label:before,
+[type="checkbox"]:not(:checked):focus+label:before,
+[type="checkbox"]:checked:focus+label:before,
+[type="checkbox"]:not(:checked):focus+label:before {
+  border: 1px dotted #f6f6f6;
+}
+
+/* hover style just for information */
+label:hover:before {
+  border: 1px solid #f6f6f6 !important;
+}
+
+/*=== Customization ===*/
+/* radio aspect */
+[type="checkbox"]:not(:checked)+label:before,
+[type="checkbox"]:checked+label:before {
+  border-radius: 3px;
+}
+
+[type="radio"]:not(:checked)+label:before,
+[type="radio"]:checked+label:before {
+  border-radius: 35px;
+}
+
+/* selected mark aspect */
+[type="checkbox"]:not(:checked)+label:after,
+[type="checkbox"]:checked+label:after {
+  content: '✔';
+  top: 0;
+  left: 2px;
+  font-size: 14px;
+}
+
+[type="radio"]:not(:checked)+label:after,
+[type="radio"]:checked+label:after {
+  content: '\2022';
+  top: 0;
+  left: 3px;
+  font-size: 30px;
+  line-height: 25px;
+}
+
+/*=== 9. Misc ===*/
+.logo {
+  padding: 15px 0;
+  font-size: 25px;
+  color: #aaaaaa;
+  font-weight: bold;
+}
+
+.logo_campusmali-header {
+  margin-bottom: 10px;
+}
+
+.main-header {
+  background: rgba(238, 240, 244, 0.4) none repeat scroll 0 0;
+  height: 60px;
+  min-height: 60px;
+}
+
+.logo_campusmali {
+  position: relative;
+}
+
+.logo_campusmali a {
+  color: rgb(10, 10, 10);
+  font-family: LeagueGothic, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  letter-spacing: 0.025em;
+  text-decoration: none;
+  text-shadow: 0 1px 1px #888;
+  text-transform: uppercase;
+}
+
+.logo_campusmali a:hover {
+  cursor: default;
+  text-decoration: none;
+}
+
+.logo_campusmali span {
+  position: absolute;
+}
+
+.logo_campusmali span p.urlname {
+  font-size: 18px;
+}
+
+.logo_campusmali span p {
+  font-size: 12px;
+}
+
+.logo_campusmali img {
+  float: left;
+  margin-right: 10px;
+  height: 80px;
+  width: 100px;
+}
+
+.box {
+  box-shadow:
+    0 2.8px 2.2px rgba(0, 0, 0, 0.034),
+    0 6.7px 5.3px rgba(0, 0, 0, 0.048),
+    0 12.5px 10px rgba(0, 0, 0, 0.06),
+    0 22.3px 17.9px rgba(0, 0, 0, 0.072),
+    0 41.8px 33.4px rgba(0, 0, 0, 0.086),
+    0 100px 80px rgba(0, 0, 0, 0.12);
+  min-height: 200px;
+  height: 1050px;
+  min-width: 25vw;
+  margin: auto;
+  background: white;
+  border-radius: 5px;
+}
+
+
+
+
+
+body {
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  background-color: #f4f4f4;
+}
+
+.container {
+  text-align: center;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.photo {
+  width: 150px;
+  height: 150px;
+  background-color: grey;
+  border-radius: 50%;
+  position: relative;
+  margin: auto;
+}
+
+.info {
+  background-color: #f6f6f6;
+  width: fit-content;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: left;
+  font-size: 16px;
+}
+
+.info p {
+  margin: 10px 0;
+}
+
+
+
+.card-custom {
+  position: relative;
+  padding-top: 60px;
+  /* Spacing for the photo */
+}
+
+.card-custom .photo {
+  position: absolute;
+  top: -50px;
+  /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid white;
+  border-radius: 50%;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+}
+
+.card-custom .photo img {
+  width: 100%;
+  height: auto;
+}
+
+.center-button {
+  display: flex;
+  justify-content: center;
+}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{% if category %}{{ category.name }}{% else %}Nos Produits{% endif %} - BIO Recolte Mali{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Catégories</h5>
+                    <div class="list-group">
+                        <a href="{% url 'store:product_list' %}" 
+                           class="list-group-item list-group-item-action {% if not category %}active{% endif %}">
+                            <i class="fas fa-th-list me-2"></i>Tous les produits
+                        </a>
+                        {% for c in categories %}
+                            <a href="{{ c.get_absolute_url }}" 
+                               class="list-group-item list-group-item-action {% if category.slug == c.slug %}active{% endif %}">
+                                <i class="fas fa-leaf me-2"></i>{{ c.name }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filtres régionaux -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="card-title mb-3">Régions</h5>
+                    <div class="list-group">
+                        <a href="?region=bamako" class="list-group-item list-group-item-action">
+                            <i class="fas fa-map-marker-alt me-2"></i>Bamako
+                        </a>
+                        <a href="?region=kayes" class="list-group-item list-group-item-action">
+                            <i class="fas fa-map-marker-alt me-2"></i>Kayes
+                        </a>
+                        <a href="?region=koulikoro" class="list-group-item list-group-item-action">
+                            <i class="fas fa-map-marker-alt me-2"></i>Koulikoro
+                        </a>
+                        <a href="?region=sikasso" class="list-group-item list-group-item-action">
+                            <i class="fas fa-map-marker-alt me-2"></i>Sikasso
+                        </a>
+                        <a href="?region=segou" class="list-group-item list-group-item-action">
+                            <i class="fas fa-map-marker-alt me-2"></i>Ségou
+                        </a>
+                        <a href="?region=mopti" class="list-group-item list-group-item-action">
+                            <i class="fas fa-map-marker-alt me-2"></i>Mopti
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Product Grid -->
+        <div class="col-md-9">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                {% if category %}
+                    <h2 class="mb-0">{{ category.name }}</h2>
+                {% else %}
+                    <h2 class="mb-0">Produits Locaux du Mali</h2>
+                {% endif %}
+                
+                <div class="dropdown">
+                    <button class="btn btn-outline-success dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        Trier par
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="?sort=name">Nom</a></li>
+                        <li><a class="dropdown-item" href="?sort=price">Prix croissant</a></li>
+                        <li><a class="dropdown-item" href="?sort=-price">Prix décroissant</a></li>
+                        <li><a class="dropdown-item" href="?sort=region">Région</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for product in products %}
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        <div class="position-relative">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}"
+                                     style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <img src="{% static 'images/no_image.png' %}" class="card-img-top" 
+                                     alt="Pas d'image disponible" style="height: 200px; object-fit: cover;">
+                            {% endif %}
+                            <span class="badge bg-success position-absolute top-0 end-0 m-2">
+                                {{ product.category.name }}
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.name }}</h5>
+                            <p class="card-text text-muted">{{ product.category.name }}</p>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="h5 mb-0">{{ product.get_price_fcfa }}</span>
+                                <form action="{% url 'store:cart_add' product.id %}" method="post" class="d-inline">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="quantity" value="1">
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-cart-plus"></i> Ajouter
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">
+                                    <i class="fas fa-user me-1"></i>{{ product.farmer.get_full_name }}
+                                </small>
+                                <small class="text-muted">
+                                    <i class="fas fa-map-marker-alt me-1"></i>{{ product.farmer.region }}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info text-center">
+                        <i class="fas fa-info-circle me-2"></i>Aucun produit disponible dans cette catégorie.
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

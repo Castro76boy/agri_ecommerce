@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background-color: #28a745;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .content {
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        .order-details {
+            margin: 20px 0;
+            border: 1px solid #ddd;
+            padding: 15px;
+            background-color: white;
+        }
+        .item {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        .total {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 12px;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Confirmation de Commande</h1>
+        </div>
+        
+        <div class="content">
+            <p>Cher(e) {{ order.shipping_name }},</p>
+            
+            <p>Nous vous remercions pour votre commande sur {{ site_name }}. Voici les détails de votre commande :</p>
+            
+            <div class="order-details">
+                <h3>Commande #{{ order.id }}</h3>
+                <p><strong>Date :</strong> {{ order.created|date:"d/m/Y H:i" }}</p>
+                <p><strong>Statut :</strong> {{ order.get_status_display }}</p>
+                <p><strong>Mode de paiement :</strong> {{ order.get_payment_method_display }}</p>
+                
+                <h4>Articles commandés :</h4>
+                {% for item in items %}
+                <div class="item">
+                    <p>
+                        {{ item.product.name }} x {{ item.quantity }}<br>
+                        Prix unitaire : {{ item.get_price_fcfa }}<br>
+                        Total : {{ item.get_total_price_fcfa }}
+                    </p>
+                </div>
+                {% endfor %}
+                
+                <div class="total">
+                    <p>Sous-total : {{ order.subtotal|floatformat:2 }} FCFA</p>
+                    {% if order.delivery_fee %}
+                    <p>Frais de livraison : {{ order.delivery_fee|floatformat:2 }} FCFA</p>
+                    {% endif %}
+                    {% if order.discount %}
+                    <p>Réduction : -{{ order.discount|floatformat:2 }} FCFA</p>
+                    {% endif %}
+                    <p>Total : {{ order.get_total_price_fcfa }}</p>
+                </div>
+            </div>
+            
+            <h4>Adresse de livraison :</h4>
+            <p>
+                {{ order.shipping_name }}<br>
+                {{ order.shipping_address }}<br>
+                {{ order.shipping_city }}, {{ order.shipping_region }}<br>
+                Tél : {{ order.phone }}
+            </p>
+            
+            {% if order.delivery_notes %}
+            <p><strong>Notes de livraison :</strong> {{ order.delivery_notes }}</p>
+            {% endif %}
+            
+            <a href="{{ site_url }}{% url 'store:order_detail' order.id %}" class="button">
+                Suivre ma commande
+            </a>
+            
+            <p>Si vous avez des questions concernant votre commande, n'hésitez pas à nous contacter.</p>
+        </div>
+        
+        <div class="footer">
+            <p>
+                {{ site_name }}<br>
+                Email : {{ default_from_email }}<br>
+                Tel : +223 XX XX XX XX
+            </p>
+            <p>Cet email a été envoyé automatiquement, merci de ne pas y répondre.</p>
+        </div>
+    </div>
+</body>
+</html>
